@@ -6,7 +6,7 @@
     "emitDecoratorMetadata": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "baseUrl": "src/",
+    "baseUrl": "./",
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "resolveJsonModule": true,
     "outDir": "./dist",
@@ -17,11 +17,12 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
+    "paths": {
+      "@config/*": ["config/*"],
+      "@src/*": ["src/*"],
+      "@tests/*": ["test/*"]
+    }
   },
-  "include": [
-    "config/**/*.ts",
-    "src/**/*.ts",
-    "test/**/*.ts",
-  ],
-  "exclude": ["node_modules"],
+  "include": ["config/**/*.ts", "src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules"]
 }
