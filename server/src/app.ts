@@ -1,9 +1,9 @@
+import 'reflect-metadata'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'
 import env from '@config/env'
 import { useExpressServer } from 'routing-controllers'
-import { SampleController } from '@src/controllers/sample.controller'
 
 const PORT = env.port || 3000
 const app = express()
@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 useExpressServer(app, {
-  controllers: [SampleController],
+  controllers: [],
   routePrefix: '/api',
   development: false,
   defaultErrorHandler: false,

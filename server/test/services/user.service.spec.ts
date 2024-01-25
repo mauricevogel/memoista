@@ -1,6 +1,7 @@
 import { User } from '@prisma/client'
 import { UserWithAccountDto } from '@src/dtos/auth/user-with-account.dto'
 import { UserService } from '@src/services/user.service'
+import { ProviderIds } from '@src/types/enums'
 import { prismaMock } from '@test/utils/prisma.mock'
 
 describe('UserService', () => {
@@ -25,13 +26,44 @@ describe('UserService', () => {
     })
   })
 
+  describe('findUserByProvider', () => {
+    it('should return a user account', async () => {
+      const providerId = ProviderIds.CREDENTIALS
+      const providerAccountId = '1234567890'
+
+      const user: User = {
+        id: '5ba0aa26-32ac-451a-a7be-929db2e7d48d',
+        name: 'John Doe',
+        email: 'test@example.com'
+      } as User
+
+      prismaMock.user.findFirst.mockResolvedValue(user)
+
+      expect(userService.findUserByProvider(ProviderIds.CREDENTIALS, providerAccountId)).resolves.toEqual(user)
+
+      expect(prismaMock.user.findFirst).toHaveBeenCalledWith({
+        where: {
+          accounts: {
+            some: {
+              providerId,
+              providerAccountId: {
+                equals: providerAccountId,
+                mode: 'insensitive'
+              }
+            }
+          }
+        }
+      })
+    })
+  })
+
   describe('createUserWithAccount', () => {
     it('should create a user with an account', async () => {
       const userWithAccount: UserWithAccountDto = {
         name: 'John Doe',
         email: 'test@example.com',
         account: {
-          providerId: 'credentials',
+          providerId: ProviderIds.CREDENTIALS,
           providerAccountId: 'test@example.com'
         }
       }
