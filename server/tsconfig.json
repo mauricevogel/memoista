@@ -14,13 +14,14 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "strictPropertyInitialization": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "paths": {
       "@config/*": ["config/*"],
       "@src/*": ["src/*"],
-      "@tests/*": ["test/*"]
+      "@test/*": ["test/*"]
     }
   },
   "include": ["config/**/*.ts", "src/**/*.ts", "test/**/*.ts"],
