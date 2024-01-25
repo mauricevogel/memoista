@@ -1,8 +1,9 @@
 import bodyParser from 'body-parser'
 import express, { Express, Request, Response } from 'express'
+import env from '@config/env'
 
 const app: Express = express()
-const PORT: string | number = process.env.PORT || 3000
+const PORT = env.port || 3000
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
