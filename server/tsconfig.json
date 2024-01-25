@@ -20,7 +20,7 @@
     "paths": {
       "@config/*": ["config/*"],
       "@src/*": ["src/*"],
-      "@tests/*": ["test/*"]
+      "@test/*": ["test/*"]
     }
   },
   "include": ["config/**/*.ts", "src/**/*.ts", "test/**/*.ts"],
