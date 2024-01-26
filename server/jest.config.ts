@@ -11,7 +11,7 @@ const jestConfig: JestConfigWithTsJest = {
     '^@test/(.*)$': '<rootDir>/test/$1'
   },
   testRegex: '.spec.ts$',
-  setupFilesAfterEnv: ['<rootDir>/test/utils/prisma.mock.ts']
+  setupFilesAfterEnv: ['<rootDir>/test/setup-tests.ts', '<rootDir>/test/mocks/prisma.mock.ts']
 }
 
 export default jestConfig
