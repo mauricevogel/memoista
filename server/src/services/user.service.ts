@@ -14,7 +14,10 @@ export class UserService {
     })
   }
 
-  async findUserByProvider(providerId: ProviderIds, providerAccountId: string): Promise<User | null> {
+  async findUserByProvider(
+    providerId: ProviderIds,
+    providerAccountId: string
+  ): Promise<User | null> {
     return prisma.user.findFirst({
       where: {
         accounts: {

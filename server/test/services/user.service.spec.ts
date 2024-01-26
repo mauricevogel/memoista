@@ -2,7 +2,7 @@ import { User } from '@prisma/client'
 import { UserWithAccountDto } from '@src/dtos/auth/user-with-account.dto'
 import { UserService } from '@src/services/user.service'
 import { ProviderIds } from '@src/types/enums'
-import { prismaMock } from '@test/utils/prisma.mock'
+import { prismaMock } from '@test/mocks/prisma.mock'
 
 describe('UserService', () => {
   const userService = new UserService()
@@ -39,7 +39,9 @@ describe('UserService', () => {
 
       prismaMock.user.findFirst.mockResolvedValue(user)
 
-      expect(userService.findUserByProvider(ProviderIds.CREDENTIALS, providerAccountId)).resolves.toEqual(user)
+      expect(
+        userService.findUserByProvider(ProviderIds.CREDENTIALS, providerAccountId)
+      ).resolves.toEqual(user)
 
       expect(prismaMock.user.findFirst).toHaveBeenCalledWith({
         where: {
