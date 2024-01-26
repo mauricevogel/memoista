@@ -11,6 +11,8 @@
     "lint:fix": "eslint src/**/*.ts test/**/*.ts --fix",
     "test": "NODE_ENV=test jest",
     "test:watch": "NODE_ENV=test jest --watch",
+    "test:e2e": "dotenv -e .env.test npm run test:e2e:ci",
+    "test:e2e:ci": "NODE_ENV=test npm run prisma:migrate:deploy && jest --config ./jest-e2e.config.ts",
     "prisma:generate": "npx prisma generate",
     "prisma:studio": "npx prisma studio",
     "prisma:migrate:dev": "npx prisma migrate dev --create-only",

@@ -24,6 +24,6 @@ useExpressServer(app, {
   }
 })
 
-app.listen(PORT, async () => {
+export const server = app.listen(PORT, async () => {
   console.log(`Server is running at http://localhost:${PORT}`)
 })
