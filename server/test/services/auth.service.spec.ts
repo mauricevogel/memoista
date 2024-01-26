@@ -1,7 +1,7 @@
 import { RegisterUserDto } from '@src/dtos/auth/register-user.dto'
 import { AuthService } from '@src/services/auth.service'
 import { UserService } from '@src/services/user.service'
-import { UserServiceMock, mockUser } from '@test/mocks/user.service.mock'
+import { mockUser, UserServiceMock } from '@test/mocks/user.service.mock'
 import Container from 'typedi'
 
 describe('AuthService', () => {

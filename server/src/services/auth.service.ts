@@ -1,10 +1,10 @@
+import { User } from '@prisma/client'
+import { RegisterUserDto } from '@src/dtos/auth/register-user.dto'
+import { UserService } from '@src/services/user.service'
+import { ProviderIds } from '@src/types/enums'
 import bcrypt from 'bcrypt'
 import { BadRequestError } from 'routing-controllers'
 import { Service } from 'typedi'
-import { UserService } from './user.service'
-import { ProviderIds } from '@src/types/enums'
-import { User } from '@prisma/client'
-import { RegisterUserDto } from '@src/dtos/auth/register-user.dto'
 
 @Service()
 export class AuthService {
