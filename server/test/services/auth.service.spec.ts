@@ -2,16 +2,12 @@ import { RegisterUserDto } from '@src/dtos/auth/register-user.dto'
 import { AuthService } from '@src/services/auth.service'
 import { UserService } from '@src/services/user.service'
 import { UserServiceMock, mockUser } from '@test/mocks/user.service.mock'
-
-const userServiceMock = UserServiceMock
-jest.mock('@src/services/user.service', () => {
-  return {
-    UserService: jest.fn().mockImplementation(() => userServiceMock)
-  }
-})
+import Container from 'typedi'
 
 describe('AuthService', () => {
-  const authService = new AuthService(userServiceMock as unknown as UserService)
+  const userServiceMock = UserServiceMock
+  Container.set(UserService, userServiceMock)
+  const authService = Container.get(AuthService)
 
   describe('registerUserWithCredentials', () => {
     it('should register a user', async () => {
