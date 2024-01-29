@@ -1,15 +1,20 @@
 import 'reflect-metadata'
+
+import env from '@config/env'
+import { AuthController } from '@src/controllers/auth.controller'
+import { loggerOptions } from '@src/logger'
 import bodyParser from 'body-parser'
 import express from 'express'
-import env from '@config/env'
+import expressWinston from 'express-winston'
 import { useExpressServer } from 'routing-controllers'
-import { AuthController } from './controllers/auth.controller'
 
 const PORT = env.port || 3000
 const app = express()
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+
+app.use(expressWinston.logger(loggerOptions))
 
 useExpressServer(app, {
   controllers: [AuthController],
