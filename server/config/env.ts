@@ -14,6 +14,7 @@ const env = {
   isDevelopment: process.env.NODE_ENV === 'development',
   isProduction: process.env.NODE_ENV === 'production',
   isTest: process.env.NODE_ENV === 'test',
+  tokenSecret: process.env.TOKEN_SECRET,
   port: Number(process.env.PORT) || 3000
 }
 
