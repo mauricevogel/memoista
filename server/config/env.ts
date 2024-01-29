@@ -15,7 +15,7 @@ const env = {
   isProduction: process.env.NODE_ENV === 'production',
   isTest: process.env.NODE_ENV === 'test',
   tokenSecret: process.env.TOKEN_SECRET,
-  port: Number(process.env.PORT) || 3000
+  port: Number(process.env.PORT) || 8080
 }
 
 export default env
