@@ -26,6 +26,7 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/memoista_test
+      TOKEN_SECRET: test-secret
     defaults:
       run:
         working-directory: server

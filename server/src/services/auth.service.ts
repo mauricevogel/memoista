@@ -1,13 +1,12 @@
 import { User } from '@prisma/client'
 import { RegisterUserDto } from '@src/dtos/auth/register-user.dto'
 import { SigninUserDto } from '@src/dtos/auth/signin-user.dto'
+import { JwtService } from '@src/services/jwt.service'
 import { UserService } from '@src/services/user.service'
 import { ProviderIds } from '@src/types/enums'
 import bcrypt from 'bcrypt'
 import { BadRequestError } from 'routing-controllers'
 import { Service } from 'typedi'
-
-import { JwtService } from './jwt.service'
 
 @Service()
 export class AuthService {
