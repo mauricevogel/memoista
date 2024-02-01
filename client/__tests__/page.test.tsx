@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 
-import Page from '@/app/page'
+import Page from '@/app/(marketing)/page'
 
 import { render, screen } from './utils'
 
