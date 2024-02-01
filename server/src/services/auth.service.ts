@@ -74,6 +74,7 @@ export class AuthService {
     }
 
     user.verificationToken = null
+    user.emailVerifiedAt = new Date()
 
     return this.userService.updateUser(user)
   }

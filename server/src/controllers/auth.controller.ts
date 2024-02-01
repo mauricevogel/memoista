@@ -28,4 +28,11 @@ export class AuthController {
   async registerUserWithCredentials(@Body() registerUserDto: RegisterUserDto): Promise<User> {
     return this.authService.registerUserWithCredentials(registerUserDto)
   }
+
+  @Post('/verify')
+  @HttpCode(200)
+  @Serialize(UserDto)
+  async verifyUser(@Body() { verificationToken }: { verificationToken: string }): Promise<User> {
+    return await this.authService.verifyUser(verificationToken)
+  }
 }
