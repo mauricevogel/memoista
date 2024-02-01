@@ -9,7 +9,10 @@ export class UserService {
   async findUserById(id: string): Promise<User | null> {
     return prisma.user.findUnique({
       where: {
-        id
+        id,
+        NOT: {
+          emailVerifiedAt: null
+        }
       }
     })
   }
@@ -28,7 +31,18 @@ export class UserService {
               mode: 'insensitive'
             }
           }
+        },
+        NOT: {
+          emailVerifiedAt: null
         }
+      }
+    })
+  }
+
+  async findUserByVerificationToken(verificationToken: string): Promise<User | null> {
+    return prisma.user.findFirst({
+      where: {
+        verificationToken
       }
     })
   }

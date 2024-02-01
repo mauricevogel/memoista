@@ -3,6 +3,7 @@ import { UserWithAccountDto } from '@src/dtos/auth/user-with-account.dto'
 import { UserService } from '@src/services/user.service'
 import { ProviderIds } from '@src/types/enums'
 import { prismaMock } from '@test/mocks/prisma.mock'
+import { mockUser } from '@test/mocks/user.service.mock'
 
 describe('UserService', () => {
   const userService = new UserService()
@@ -20,7 +21,10 @@ describe('UserService', () => {
       expect(userService.findUserById(user.id)).resolves.toEqual(user)
       expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
         where: {
-          id: user.id
+          id: user.id,
+          NOT: {
+            emailVerifiedAt: null
+          }
         }
       })
     })
@@ -53,7 +57,25 @@ describe('UserService', () => {
                 mode: 'insensitive'
               }
             }
+          },
+          NOT: {
+            emailVerifiedAt: null
           }
+        }
+      })
+    })
+  })
+
+  describe('findUserByVerificationToken', () => {
+    it('should return a user account', async () => {
+      const user = mockUser as User
+
+      prismaMock.user.findFirst.mockResolvedValue(user)
+
+      expect(userService.findUserByVerificationToken('verification-token')).resolves.toEqual(user)
+      expect(prismaMock.user.findFirst).toHaveBeenCalledWith({
+        where: {
+          verificationToken: 'verification-token'
         }
       })
     })

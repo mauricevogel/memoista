@@ -26,13 +26,14 @@ model Account {
 }
 
 model User {
-  id              String    @id @default(uuid())
-  name            String?
-  email           String?   @unique @db.Citext
-  emailVerifiedAt DateTime?
-  image           String?
-  passwordDigest  String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  accounts        Account[]
+  id                String    @id @default(uuid())
+  name              String?
+  email             String?   @unique @db.Citext
+  emailVerifiedAt   DateTime?
+  image             String?
+  passwordDigest    String?
+  verificationToken String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  accounts          Account[]
 }
