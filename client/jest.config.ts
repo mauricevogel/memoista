@@ -9,7 +9,8 @@ const config: Config = {
   clearMocks: true,
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts']
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  testPathIgnorePatterns: ['<rootDir>/__tests__/utils/']
 }
 
 export default createJestConfig(config)
