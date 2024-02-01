@@ -20,6 +20,7 @@ export class UserWithAccountDto {
 
   emailVerifiedAt?: Date
   passwordDigest?: string
+  verificationToken?: string
 
   @IsUrl()
   image?: string

@@ -105,4 +105,20 @@ describe('AuthService', () => {
       )
     })
   })
+
+  describe('verifyUser', () => {
+    it('should verify a user', async () => {
+      userServiceMock.findUserByVerificationToken.mockResolvedValue(mockUser)
+      userServiceMock.updateUser.mockResolvedValue(mockUser)
+
+      const user = await authService.verifyUser('verification-token')
+      expect(user).toEqual(mockUser)
+    })
+
+    it('should throw an error if the verification token is invalid', async () => {
+      userServiceMock.findUserByVerificationToken.mockResolvedValue(null)
+
+      expect(authService.verifyUser('invalid-token')).rejects.toThrow('Invalid verification token')
+    })
+  })
 })

@@ -110,4 +110,22 @@ describe('UserService', () => {
       })
     })
   })
+
+  describe('updateUser', () => {
+    it('should update a user', async () => {
+      const user = mockUser as User
+
+      prismaMock.user.update.mockResolvedValue(user)
+
+      expect(userService.updateUser(user)).resolves.toEqual(user)
+      expect(prismaMock.user.update).toHaveBeenCalledWith({
+        where: {
+          id: user.id
+        },
+        data: {
+          ...user
+        }
+      })
+    })
+  })
 })
