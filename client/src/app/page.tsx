@@ -8,7 +8,8 @@ export default async function Home() {
   return (
     <main className="flex flex-col">
       <Image src="/logo.svg" alt="Memoista Logo" width={150} height={50} priority />
-      <p>{JSON.stringify(session)}</p>
+      <p>Server Component</p>
+      <p>{JSON.stringify(session?.user)}</p>
 
       <a href="/api/auth/signin" className="mt-20 font-bold max-w-fit">
         Login
