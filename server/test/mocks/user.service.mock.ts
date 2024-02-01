@@ -7,6 +7,9 @@ export const mockUser: Partial<User> = {
 }
 
 export const UserServiceMock = {
+  findUserById: jest.fn(),
   findUserByProvider: jest.fn(),
-  createUserWithAccount: jest.fn()
+  findUserByVerificationToken: jest.fn(),
+  createUserWithAccount: jest.fn(),
+  updateUser: jest.fn()
 }

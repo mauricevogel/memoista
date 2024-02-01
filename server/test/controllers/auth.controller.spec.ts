@@ -1,11 +1,11 @@
 import { AuthController } from '@src/controllers/auth.controller'
 import { AuthService } from '@src/services/auth.service'
 import { AuthServiceMock } from '@test/mocks/auth.service.mock'
+import { mockUser } from '@test/mocks/user.service.mock'
 import Container from 'typedi'
 
-Container.set(AuthService, AuthServiceMock)
-
 describe('AuthController', () => {
+  Container.set(AuthService, AuthServiceMock)
   const authController = new AuthController()
 
   describe('POST signin', () => {
@@ -38,6 +38,16 @@ describe('AuthController', () => {
       await authController.registerUserWithCredentials(registerUserDto)
 
       expect(AuthServiceMock.registerUserWithCredentials).toHaveBeenCalledWith(registerUserDto)
+    })
+  })
+
+  describe('POST verify', () => {
+    it('should verify a user account', async () => {
+      AuthServiceMock.verifyUser.mockResolvedValue(mockUser)
+
+      await authController.verifyUser({ verificationToken: 'testtoken' })
+
+      expect(AuthServiceMock.verifyUser).toHaveBeenCalledWith('testtoken')
     })
   })
 })

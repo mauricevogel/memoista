@@ -5,6 +5,7 @@ import { JwtService } from '@src/services/jwt.service'
 import { UserService } from '@src/services/user.service'
 import { ProviderIds } from '@src/types/enums'
 import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 import { BadRequestError } from 'routing-controllers'
 import { Service } from 'typedi'
 
@@ -49,10 +50,13 @@ export class AuthService {
     }
 
     const passwordDigest = await this.hashPassword(registerUserDto.password)
+    const verificationToken = this.generateVerificationToken()
+
     const user = await this.userService.createUserWithAccount({
       name: registerUserDto.name,
       email: registerUserDto.email,
       passwordDigest,
+      verificationToken,
       account: {
         providerId: ProviderIds.CREDENTIALS,
         providerAccountId: registerUserDto.email
@@ -62,7 +66,24 @@ export class AuthService {
     return user
   }
 
+  async verifyUser(verificationToken: string): Promise<User> {
+    const user = await this.userService.findUserByVerificationToken(verificationToken)
+
+    if (!user) {
+      throw new BadRequestError('Invalid verification token')
+    }
+
+    user.verificationToken = null
+    user.emailVerifiedAt = new Date()
+
+    return this.userService.updateUser(user)
+  }
+
   private hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10)
+  }
+
+  private generateVerificationToken(): string {
+    return crypto.randomBytes(16).toString('hex')
   }
 }

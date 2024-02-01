@@ -8,6 +8,7 @@ import request from 'supertest'
 
 describe('Auth (e2e)', () => {
   let user: User
+  let userFactory: UserFactory
 
   beforeAll(async () => {
     await prisma.user.deleteMany()
@@ -19,7 +20,7 @@ describe('Auth (e2e)', () => {
 
   describe('POST /api/auth/signin', () => {
     beforeAll(async () => {
-      const userFactory = new UserFactory()
+      userFactory = new UserFactory()
       user = await userFactory.createUserWithAccount()
     })
 
@@ -50,10 +51,20 @@ describe('Auth (e2e)', () => {
 
       await request(server).post('/api/auth/signin').send(signinUserDto).expect(400)
     })
+
+    it('should return 400 with unverified user', async () => {
+      const unverifiedUser = await userFactory.createUserWithAccount(false)
+      const signinUserDto = {
+        email: unverifiedUser.email,
+        password: 'testpassword'
+      }
+
+      await request(server).post('/api/auth/signin').send(signinUserDto).expect(400)
+    })
   })
 
   describe('POST /api/auth/register', () => {
-    it('should register a user', async () => {
+    it('should register a unverified user', async () => {
       const registerUserDto = {
         name: 'new-user',
         email: 'new-user@example.com',
@@ -66,25 +77,50 @@ describe('Auth (e2e)', () => {
         .send(registerUserDto)
         .expect(201)
 
-      expect(
-        prisma.user.count({
-          where: {
-            email: registerUserDto.email
+      const registeredUser = await prisma.user.findUnique({
+        where: {
+          email: registerUserDto.email,
+          accounts: {
+            some: {
+              providerId: ProviderIds.CREDENTIALS,
+              providerAccountId: {
+                equals: registerUserDto.email
+              }
+            }
           }
-        })
-      ).resolves.toBe(1)
+        }
+      })
 
-      expect(
-        prisma.account.count({
-          where: {
-            providerId: ProviderIds.CREDENTIALS,
-            providerAccountId: registerUserDto.email
-          }
-        })
-      ).resolves.toBe(1)
+      expect(registeredUser).toBeDefined()
+      expect(registeredUser?.emailVerifiedAt).toBeNull()
+      expect(registeredUser?.verificationToken).toBeDefined()
+      expect(response.body).toMatchObject({
+        name: registeredUser?.name,
+        email: registeredUser?.email
+      })
+    })
+  })
 
-      expect(response.body.name).toEqual(registerUserDto.name)
-      expect(response.body.email).toEqual(registerUserDto.email)
+  describe('POST /api/auth/verify', () => {
+    it('should verify a user account', async () => {
+      const unverifiedUser = await userFactory.createUserWithAccount(false)
+
+      const response = await request(server)
+        .post('/api/auth/verify')
+        .send({ verificationToken: unverifiedUser.verificationToken })
+        .expect(200)
+
+      expect(response.body).toMatchObject({
+        name: unverifiedUser.name,
+        email: unverifiedUser.email
+      })
+    })
+
+    it('should return 400 with invalid verification token', async () => {
+      await request(server)
+        .post('/api/auth/verify')
+        .send({ verificationToken: 'invalid-token' })
+        .expect(400)
     })
   })
 })

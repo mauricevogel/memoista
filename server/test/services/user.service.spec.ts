@@ -3,9 +3,11 @@ import { UserWithAccountDto } from '@src/dtos/auth/user-with-account.dto'
 import { UserService } from '@src/services/user.service'
 import { ProviderIds } from '@src/types/enums'
 import { prismaMock } from '@test/mocks/prisma.mock'
+import { mockUser } from '@test/mocks/user.service.mock'
+import Container from 'typedi'
 
 describe('UserService', () => {
-  const userService = new UserService()
+  const userService = Container.get(UserService)
 
   describe('findUserById', () => {
     it('should return a user', async () => {
@@ -20,7 +22,10 @@ describe('UserService', () => {
       expect(userService.findUserById(user.id)).resolves.toEqual(user)
       expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
         where: {
-          id: user.id
+          id: user.id,
+          NOT: {
+            emailVerifiedAt: null
+          }
         }
       })
     })
@@ -53,7 +58,25 @@ describe('UserService', () => {
                 mode: 'insensitive'
               }
             }
+          },
+          NOT: {
+            emailVerifiedAt: null
           }
+        }
+      })
+    })
+  })
+
+  describe('findUserByVerificationToken', () => {
+    it('should return a user account', async () => {
+      const user = mockUser as User
+
+      prismaMock.user.findFirst.mockResolvedValue(user)
+
+      expect(userService.findUserByVerificationToken('verification-token')).resolves.toEqual(user)
+      expect(prismaMock.user.findFirst).toHaveBeenCalledWith({
+        where: {
+          verificationToken: 'verification-token'
         }
       })
     })
@@ -84,6 +107,24 @@ describe('UserService', () => {
               ...account
             }
           }
+        }
+      })
+    })
+  })
+
+  describe('updateUser', () => {
+    it('should update a user', async () => {
+      const user = mockUser as User
+
+      prismaMock.user.update.mockResolvedValue(user)
+
+      expect(userService.updateUser(user)).resolves.toEqual(user)
+      expect(prismaMock.user.update).toHaveBeenCalledWith({
+        where: {
+          id: user.id
+        },
+        data: {
+          ...user
         }
       })
     })

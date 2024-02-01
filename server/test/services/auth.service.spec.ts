@@ -6,8 +6,7 @@ import bcrypt from 'bcrypt'
 import Container from 'typedi'
 
 describe('AuthService', () => {
-  const userServiceMock = UserServiceMock
-  Container.set(UserService, userServiceMock)
+  Container.set(UserService, UserServiceMock)
   const authService = Container.get(AuthService)
 
   describe('signInWithCredentials', () => {
@@ -22,7 +21,7 @@ describe('AuthService', () => {
         password: 'testpassword'
       }
 
-      userServiceMock.findUserByProvider.mockResolvedValue(user)
+      UserServiceMock.findUserByProvider.mockResolvedValue(user)
 
       const token = await authService.signInWithCredentials(signinUserDto)
 
@@ -35,7 +34,7 @@ describe('AuthService', () => {
         password: 'testpassword'
       }
 
-      userServiceMock.findUserByProvider.mockResolvedValue(null)
+      UserServiceMock.findUserByProvider.mockResolvedValue(null)
 
       expect(authService.signInWithCredentials(signinUserDto)).rejects.toThrow(
         'Invalid email or password'
@@ -53,7 +52,7 @@ describe('AuthService', () => {
         password: 'test'
       }
 
-      userServiceMock.findUserByProvider.mockResolvedValue(user)
+      UserServiceMock.findUserByProvider.mockResolvedValue(user)
 
       expect(authService.signInWithCredentials(signinUserDto)).rejects.toThrow(
         'Invalid email or password'
@@ -70,8 +69,8 @@ describe('AuthService', () => {
         passwordConfirmation: 'testpassword'
       }
 
-      userServiceMock.findUserByProvider.mockResolvedValue(null)
-      userServiceMock.createUserWithAccount.mockResolvedValue(registerUserDto)
+      UserServiceMock.findUserByProvider.mockResolvedValue(null)
+      UserServiceMock.createUserWithAccount.mockResolvedValue(registerUserDto)
 
       const user = await authService.registerUserWithCredentials(registerUserDto)
       expect(user).toEqual(registerUserDto)
@@ -85,7 +84,7 @@ describe('AuthService', () => {
         passwordConfirmation: 'testpassword'
       }
 
-      userServiceMock.findUserByProvider.mockResolvedValue(mockUser)
+      UserServiceMock.findUserByProvider.mockResolvedValue(mockUser)
 
       expect(authService.registerUserWithCredentials(registerUserDto)).rejects.toThrow(
         'Email is already taken'
@@ -103,6 +102,22 @@ describe('AuthService', () => {
       expect(authService.registerUserWithCredentials(registerUserDto)).rejects.toThrow(
         'Password confirmation does not match password'
       )
+    })
+  })
+
+  describe('verifyUser', () => {
+    it('should verify a user', async () => {
+      UserServiceMock.findUserByVerificationToken.mockResolvedValue(mockUser)
+      UserServiceMock.updateUser.mockResolvedValue(mockUser)
+
+      const user = await authService.verifyUser('verification-token')
+      expect(user).toEqual(mockUser)
+    })
+
+    it('should throw an error if the verification token is invalid', async () => {
+      UserServiceMock.findUserByVerificationToken.mockResolvedValue(null)
+
+      expect(authService.verifyUser('invalid-token')).rejects.toThrow('Invalid verification token')
     })
   })
 })
