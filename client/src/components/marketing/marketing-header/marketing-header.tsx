@@ -5,6 +5,8 @@ import { useDisclosure } from '@mantine/hooks'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { DarkModeToggle } from '@/components/ui/dark-mode-toggle/dark-mode-toggle'
+
 import classes from './marketing-header.module.css'
 
 export const MarketingHeader = () => {
@@ -16,7 +18,7 @@ export const MarketingHeader = () => {
         <div className={classes.inner}>
           <Image src="/logo.svg" alt="Memoista" width={125} height={100} />
           <Group gap={5} visibleFrom="sm">
-            <Link href="/home" className={classes.link}>
+            <Link href="/" className={classes.link}>
               Home
             </Link>
             <Link href="/features" className={classes.link}>
@@ -27,6 +29,7 @@ export const MarketingHeader = () => {
             </Link>
           </Group>
           <Group gap={5}>
+            <DarkModeToggle />
             <Burger opened={mobileMenuOpen} onClick={toggle} size="sm" hiddenFrom="sm" />
           </Group>
         </div>
