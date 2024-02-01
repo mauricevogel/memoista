@@ -1,6 +1,6 @@
 'use client'
 
-import { Burger, Container, Group } from '@mantine/core'
+import { Burger, Button, Container, Group } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -16,7 +16,7 @@ export const MarketingHeader = () => {
     <header className={classes.header}>
       <Container size="xl">
         <div className={classes.inner}>
-          <Image src="/logo.svg" alt="Memoista" width={125} height={100} />
+          <Image src="/logo.svg" alt="Memoista" width={125} height={50} />
           <Group gap={5} visibleFrom="sm">
             <Link href="/" className={classes.link}>
               Home
@@ -28,9 +28,18 @@ export const MarketingHeader = () => {
               About
             </Link>
           </Group>
-          <Group gap={5}>
+          <Group gap={15}>
             <DarkModeToggle />
             <Burger opened={mobileMenuOpen} onClick={toggle} size="sm" hiddenFrom="sm" />
+            <Group justify="center" visibleFrom="md" gap={8}>
+              <Link href="/auth/login">
+                <Button variant="default">Login</Button>
+              </Link>
+
+              <Link href="/auth/register">
+                <Button>Sign up</Button>
+              </Link>
+            </Group>
           </Group>
         </div>
       </Container>

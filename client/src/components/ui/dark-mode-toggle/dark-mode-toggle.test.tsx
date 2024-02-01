@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom'
 
-import { render, screen } from '../../../../__tests__/utils'
+import { render, screen } from '@tests/utils'
+
 import { DarkModeToggle } from './dark-mode-toggle'
 
 describe('MarketingHeader', () => {
