@@ -18,9 +18,9 @@ export class UserWithAccountDto {
   @IsEmail()
   email?: string
 
-  emailVerifiedAt?: Date
+  emailVerifiedAt?: Date | null
   passwordDigest?: string
-  verificationToken?: string
+  verificationToken?: string | null
 
   @IsUrl()
   image?: string

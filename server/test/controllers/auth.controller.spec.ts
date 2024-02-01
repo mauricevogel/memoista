@@ -4,9 +4,8 @@ import { AuthServiceMock } from '@test/mocks/auth.service.mock'
 import { mockUser } from '@test/mocks/user.service.mock'
 import Container from 'typedi'
 
-Container.set(AuthService, AuthServiceMock)
-
 describe('AuthController', () => {
+  Container.set(AuthService, AuthServiceMock)
   const authController = new AuthController()
 
   describe('POST signin', () => {

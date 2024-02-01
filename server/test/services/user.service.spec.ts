@@ -4,9 +4,10 @@ import { UserService } from '@src/services/user.service'
 import { ProviderIds } from '@src/types/enums'
 import { prismaMock } from '@test/mocks/prisma.mock'
 import { mockUser } from '@test/mocks/user.service.mock'
+import Container from 'typedi'
 
 describe('UserService', () => {
-  const userService = new UserService()
+  const userService = Container.get(UserService)
 
   describe('findUserById', () => {
     it('should return a user', async () => {
