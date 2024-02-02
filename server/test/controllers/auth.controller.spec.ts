@@ -1,3 +1,4 @@
+import { User } from '@prisma/client'
 import { AuthController } from '@src/controllers/auth.controller'
 import { AuthService } from '@src/services/auth.service'
 import { AuthServiceMock } from '@test/mocks/auth.service.mock'
@@ -7,6 +8,16 @@ import Container from 'typedi'
 describe('AuthController', () => {
   Container.set(AuthService, AuthServiceMock)
   const authController = new AuthController()
+
+  describe('GET whoami', () => {
+    it('should return the current user', async () => {
+      const currentUser = mockUser
+
+      const response = await authController.whoAmI(currentUser as User)
+
+      expect(response).toEqual(currentUser)
+    })
+  })
 
   describe('POST signin', () => {
     it('should signin a user', async () => {

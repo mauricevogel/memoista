@@ -3,12 +3,13 @@ import { server } from '@src/app'
 import prisma from '@src/prisma'
 import { ProviderIds } from '@src/types/enums'
 import { UserFactory } from '@test/factories/user.factory'
+import { createAccessToken } from '@test/utils/jwt'
 import jwt from 'jsonwebtoken'
 import request from 'supertest'
 
 describe('Auth (e2e)', () => {
+  const userFactory = new UserFactory()
   let user: User
-  let userFactory: UserFactory
 
   beforeAll(async () => {
     await prisma.user.deleteMany()
@@ -18,9 +19,36 @@ describe('Auth (e2e)', () => {
     server.close()
   })
 
+  describe('GET /api/auth/whoami', () => {
+    it('should return the current user', async () => {
+      const user = await userFactory.createUserWithAccount()
+      const accessToken = createAccessToken({ user: { id: user.id } })
+
+      const response = await request(server)
+        .get('/api/auth/whoami')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+
+      expect(response.body).toMatchObject({
+        name: user.name,
+        email: user.email
+      })
+    })
+
+    it('should return 401 with invalid token', async () => {
+      await request(server)
+        .get('/api/auth/whoami')
+        .set('Authorization', `Bearer invalid-token`)
+        .expect(401)
+    })
+
+    it('should return 401 with missing token', async () => {
+      await request(server).get('/api/auth/whoami').expect(401)
+    })
+  })
+
   describe('POST /api/auth/signin', () => {
     beforeAll(async () => {
-      userFactory = new UserFactory()
       user = await userFactory.createUserWithAccount()
     })
 
@@ -39,7 +67,7 @@ describe('Auth (e2e)', () => {
 
       expect(accessToken).toBeDefined()
       expect(jwt.decode(accessToken)).toMatchObject({
-        userId: user.id
+        user: { id: user.id }
       })
     })
 

@@ -5,7 +5,7 @@ import { TokenResponseDto } from '@src/dtos/auth/token-response.dto'
 import { UserDto } from '@src/dtos/user.dto'
 import { Serialize } from '@src/interceptors/serialize.interceptor'
 import { AuthService } from '@src/services/auth.service'
-import { Body, HttpCode, JsonController, Post } from 'routing-controllers'
+import { Body, CurrentUser, Get, HttpCode, JsonController, Post } from 'routing-controllers'
 import Container from 'typedi'
 
 @JsonController('/auth')
@@ -14,6 +14,12 @@ export class AuthController {
 
   constructor() {
     this.authService = Container.get(AuthService)
+  }
+
+  @Get('/whoami')
+  @Serialize(UserDto)
+  async whoAmI(@CurrentUser({ required: true }) user: User): Promise<User> {
+    return user
   }
 
   @Post('/signin')
