@@ -6,7 +6,8 @@ import { UserService } from '@src/services/user.service'
 import { ProviderIds } from '@src/types/enums'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
-import { BadRequestError } from 'routing-controllers'
+import { JwtPayload } from 'jsonwebtoken'
+import { Action, BadRequestError } from 'routing-controllers'
 import { Service } from 'typedi'
 
 @Service()
@@ -15,6 +16,21 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService
   ) {}
+
+  async authenticateUser(action: Action): Promise<User | null> {
+    try {
+      const authHeader = action.request.headers['authorization']
+      const accessToken = this.extractAuthTokenFromHeader(authHeader)
+      if (!accessToken) return null
+
+      const payload = this.jwtService.verifyToken(accessToken) as JwtPayload
+      if (!payload || !payload.user.id) return null
+
+      return this.userService.findUserById(payload.user.id)
+    } catch {
+      return null
+    }
+  }
 
   async signInWithCredentials(signinUserDto: SigninUserDto): Promise<string> {
     const user = await this.userService.findUserByProvider(
@@ -32,7 +48,11 @@ export class AuthService {
       throw new BadRequestError('Invalid email or password')
     }
 
-    return this.jwtService.generateToken({ userId: user.id })
+    const tokenPayload = {
+      user: { id: user.id }
+    }
+
+    return this.jwtService.generateToken(tokenPayload)
   }
 
   async registerUserWithCredentials(registerUserDto: RegisterUserDto): Promise<User> {
@@ -85,5 +105,13 @@ export class AuthService {
 
   private generateVerificationToken(): string {
     return crypto.randomBytes(16).toString('hex')
+  }
+
+  private extractAuthTokenFromHeader(authHeader: string | null) {
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      return authHeader.split(' ')[1]
+    }
+
+    return null
   }
 }

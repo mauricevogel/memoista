@@ -3,11 +3,47 @@ import { AuthService } from '@src/services/auth.service'
 import { UserService } from '@src/services/user.service'
 import { mockUser, UserServiceMock } from '@test/mocks/user.service.mock'
 import bcrypt from 'bcrypt'
+import { Action } from 'routing-controllers'
 import Container from 'typedi'
+
+import { JwtService } from './../../src/services/jwt.service'
 
 describe('AuthService', () => {
   Container.set(UserService, UserServiceMock)
   const authService = Container.get(AuthService)
+
+  describe('authenticateUser', () => {
+    const jwtService = Container.get(JwtService)
+
+    it('should return authenticated user', async () => {
+      const user = mockUser
+      const authToken = jwtService.generateToken({ user: { id: user.id } })
+
+      const action = {
+        request: {
+          headers: {
+            authorization: `Bearer ${authToken}`
+          }
+        }
+      } as Action
+
+      UserServiceMock.findUserById.mockResolvedValue(user)
+
+      expect(authService.authenticateUser(action)).resolves.toEqual(user)
+    })
+
+    it('should return null if token is invalid', async () => {
+      const action = {
+        request: {
+          headers: {
+            authorization: `Bearer invalid-token`
+          }
+        }
+      } as Action
+
+      expect(authService.authenticateUser(action)).resolves.toEqual(null)
+    })
+  })
 
   describe('signInWithCredentials', () => {
     it('should return a token on successful sign in', async () => {
