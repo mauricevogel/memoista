@@ -1,3 +1,13 @@
+.actionIcon {
+  @mixin light {
+    color: var(--mantine-color-black);
+  }
+
+  @mixin dark {
+    color: var(--mantine-color-white);
+  }
+}
+
 .icon {
   width: 20px;
   height: 20px;
