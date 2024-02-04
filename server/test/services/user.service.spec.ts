@@ -32,7 +32,7 @@ describe('UserService', () => {
   })
 
   describe('findUserByProvider', () => {
-    it('should return a user account', async () => {
+    it('should return a verified user account', async () => {
       const providerId = ProviderIds.CREDENTIALS
       const providerAccountId = '1234567890'
 
@@ -61,6 +61,36 @@ describe('UserService', () => {
           },
           NOT: {
             emailVerifiedAt: null
+          }
+        }
+      })
+    })
+    it('should return a unverified user account with verified: false', async () => {
+      const providerId = ProviderIds.CREDENTIALS
+      const providerAccountId = '1234567890'
+
+      const user: User = {
+        id: '5ba0aa26-32ac-451a-a7be-929db2e7d48d',
+        name: 'John Doe',
+        email: 'test@example.com'
+      } as User
+
+      prismaMock.user.findFirst.mockResolvedValue(user)
+
+      expect(
+        userService.findUserByProvider(ProviderIds.CREDENTIALS, providerAccountId, false)
+      ).resolves.toEqual(user)
+
+      expect(prismaMock.user.findFirst).toHaveBeenCalledWith({
+        where: {
+          accounts: {
+            some: {
+              providerId,
+              providerAccountId: {
+                equals: providerAccountId,
+                mode: 'insensitive'
+              }
+            }
           }
         }
       })
