@@ -19,24 +19,31 @@ export class UserService {
 
   async findUserByProvider(
     providerId: ProviderIds,
-    providerAccountId: string
+    providerAccountId: string,
+    verfified = true
   ): Promise<User | null> {
-    return prisma.user.findFirst({
-      where: {
-        accounts: {
-          some: {
-            providerId,
-            providerAccountId: {
-              equals: providerAccountId,
-              mode: 'insensitive'
-            }
+    let query: object = {
+      accounts: {
+        some: {
+          providerId,
+          providerAccountId: {
+            equals: providerAccountId,
+            mode: 'insensitive'
           }
-        },
+        }
+      }
+    }
+
+    if (verfified) {
+      query = {
+        ...query,
         NOT: {
           emailVerifiedAt: null
         }
       }
-    })
+    }
+
+    return prisma.user.findFirst({ where: query })
   }
 
   async findUserByVerificationToken(verificationToken: string): Promise<User | null> {

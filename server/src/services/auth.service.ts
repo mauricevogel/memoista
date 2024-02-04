@@ -62,7 +62,8 @@ export class AuthService {
 
     const existingUser = await this.userService.findUserByProvider(
       ProviderIds.CREDENTIALS,
-      registerUserDto.email
+      registerUserDto.email,
+      false
     )
 
     if (existingUser) {

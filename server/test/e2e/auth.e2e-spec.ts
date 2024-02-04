@@ -127,6 +127,19 @@ describe('Auth (e2e)', () => {
         email: registeredUser?.email
       })
     })
+
+    it('should not register a user with the same email', async () => {
+      const user = await userFactory.createUserWithAccount()
+
+      const registerUserDto = {
+        name: 'new-user',
+        email: user.email,
+        password: 'testpassword',
+        passwordConfirmation: 'testpassword'
+      }
+
+      await request(server).post('/api/auth/register').send(registerUserDto).expect(400)
+    })
   })
 
   describe('POST /api/auth/verify', () => {
