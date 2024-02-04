@@ -1,0 +1,19 @@
+.registerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+}
+
+.title {
+  font-weight: 900;
+}
+
+.link {
+  text-decoration: none;
+}
