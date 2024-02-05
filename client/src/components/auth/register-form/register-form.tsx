@@ -12,6 +12,7 @@ import {
   Title
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
+import { notifications } from '@mantine/notifications'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -46,6 +47,12 @@ export const RegisterForm = () => {
     startTransition(() => {
       registerUser(values).then((response) => {
         if (response.success) {
+          notifications.show({
+            title: 'Account created',
+            message:
+              'Please check your email on information on how to confirm and activate your account!',
+            autoClose: false
+          })
           router.push('/')
         } else {
           setError(response.error)
