@@ -80,12 +80,14 @@ export const RegisterForm = () => {
 
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <TextInput
+            name="username"
             label="Username"
             placeholder="Select username"
             withAsterisk
             {...form.getInputProps('name')}
           />
           <TextInput
+            name="email"
             label="Email"
             placeholder="you@mantine.dev"
             mt="md"
@@ -93,6 +95,7 @@ export const RegisterForm = () => {
             {...form.getInputProps('email')}
           />
           <PasswordInput
+            name="password"
             label="Password"
             placeholder="Your password"
             mt="md"
@@ -100,6 +103,7 @@ export const RegisterForm = () => {
             {...form.getInputProps('password')}
           />
           <PasswordInput
+            name="passwordConfirmation"
             label="Password confirmation"
             placeholder="Confirm your password"
             mt="md"
