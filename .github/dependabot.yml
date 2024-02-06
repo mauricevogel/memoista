@@ -6,8 +6,16 @@ updates:
     versioning-strategy: increase-if-necessary
     schedule:
       interval: weekly
+    groups:
+      client_deps:
+        patterns:
+          - "*"
   - package-ecosystem: npm
     directory: "/server"
     versioning-strategy: increase-if-necessary
     schedule:
       interval: weekly
+    groups:
+      server_deps:
+        patterns:
+          - "*"
