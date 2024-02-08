@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { DarkModeToggle } from '@/components/ui/dark-mode-toggle/dark-mode-toggle'
+import useMemoistaSession from '@/hooks/use-memoista-session'
 
 import { MarketingMobileNavigation } from '../marketing-mobile-navigation/marketing-mobile-navigation'
 import classes from './marketing-header.module.css'
@@ -18,6 +19,30 @@ const links = [
 
 export const MarketingHeader = () => {
   const [mobileMenuOpen, { toggle }] = useDisclosure(false)
+  const { status } = useMemoistaSession()
+  const userIsAuthenticated = status === 'authenticated'
+
+  const actionButtons = () => {
+    if (userIsAuthenticated) {
+      return (
+        <Link href="/app">
+          <Button variant="default">Go to app</Button>
+        </Link>
+      )
+    }
+
+    return (
+      <>
+        <Link href="/auth/login">
+          <Button variant="default">Login</Button>
+        </Link>
+
+        <Link href="/auth/register">
+          <Button>Register</Button>
+        </Link>
+      </>
+    )
+  }
 
   return (
     <>
@@ -39,21 +64,20 @@ export const MarketingHeader = () => {
             <Group gap={15}>
               <DarkModeToggle />
               <Burger opened={mobileMenuOpen} onClick={toggle} size="sm" hiddenFrom="sm" />
-              <Group justify="center" visibleFrom="md" gap={8}>
-                <Link href="/auth/login">
-                  <Button variant="default">Login</Button>
-                </Link>
-
-                <Link href="/auth/register">
-                  <Button>Sign up</Button>
-                </Link>
+              <Group justify="center" visibleFrom="sm" gap={8}>
+                {actionButtons()}
               </Group>
             </Group>
           </div>
         </Container>
       </header>
 
-      <MarketingMobileNavigation links={links} isOpen={mobileMenuOpen} onClose={toggle} />
+      <MarketingMobileNavigation
+        authenticatedUser={userIsAuthenticated}
+        links={links}
+        isOpen={mobileMenuOpen}
+        onClose={toggle}
+      />
     </>
   )
 }

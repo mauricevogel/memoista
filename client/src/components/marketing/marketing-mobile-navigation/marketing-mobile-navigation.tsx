@@ -4,13 +4,40 @@ import Link from 'next/link'
 import classes from './marketing-mobile-navigation.module.css'
 
 interface MarketingMobileNavigationProps {
+  authenticatedUser: boolean
   links: { title: string; href: string }[]
   isOpen: boolean
   onClose: () => void
 }
 
 export const MarketingMobileNavigation = (props: MarketingMobileNavigationProps) => {
-  const { links, isOpen, onClose } = props
+  const { authenticatedUser, links, isOpen, onClose } = props
+
+  const actionButtons = () => {
+    if (authenticatedUser) {
+      return (
+        <Link href="/app">
+          <Button variant="default" w="100%">
+            Go to app
+          </Button>
+        </Link>
+      )
+    }
+
+    return (
+      <>
+        <Link href="/auth/login">
+          <Button variant="default" w="100%">
+            Login
+          </Button>
+        </Link>
+
+        <Link href="/auth/register">
+          <Button w="100%">Register</Button>
+        </Link>
+      </>
+    )
+  }
 
   return (
     <Drawer
@@ -36,15 +63,7 @@ export const MarketingMobileNavigation = (props: MarketingMobileNavigationProps)
       <Divider my="sm" />
 
       <Group justify="center" grow pb="xl" px="md">
-        <Link href="/auth/login">
-          <Button variant="default" w="100%">
-            Login
-          </Button>
-        </Link>
-
-        <Link href="/auth/register">
-          <Button w="100%">Sign up</Button>
-        </Link>
+        {actionButtons()}
       </Group>
     </Drawer>
   )
