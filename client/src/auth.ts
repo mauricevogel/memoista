@@ -7,6 +7,9 @@ export const {
   auth,
   signIn
 } = NextAuth({
+  pages: {
+    signIn: '/auth/login'
+  },
   callbacks: {
     // Add additional data to the JWT
     jwt: async ({ token, user }) => {
