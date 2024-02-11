@@ -1,3 +1,5 @@
+'use server'
+
 import * as z from 'zod'
 
 import { RegisterUserSchema } from '@/schemas'
@@ -9,8 +11,6 @@ export const registerUser = async (values: z.infer<typeof RegisterUserSchema>) =
     if (!validatedFields.success) {
       return { error: 'Invalid fields!' }
     }
-
-    console.log(process.env.NEXT_PUBLIC_API_URL + '/auth/register')
 
     const registerResponse = await fetch(process.env.NEXT_PUBLIC_API_URL + '/auth/register', {
       method: 'POST',

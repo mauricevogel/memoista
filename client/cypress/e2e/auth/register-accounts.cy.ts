@@ -7,13 +7,17 @@ describe('Register Accounts', () => {
     cy.get('input[name="password"]').type('test-password')
     cy.get('input[name="passwordConfirmation"]').type('test-password')
 
-    cy.intercept('POST', `/api/auth/register`, {
-      statusCode: 201
-    }).as('registerRequest')
+    cy.task('mockServer', {
+      interceptUrl: `http://localhost:8080/api/auth/register`,
+      fixture: 'empty.json'
+    })
+
     cy.get('button[type="submit"]').click()
 
-    cy.wait('@registerRequest').then(() => {
-      cy.location('pathname').should('eq', '/')
-    })
+    cy.location('pathname').should('eq', '/')
+    cy.contains('Account created')
+    cy.contains(
+      'Please check your email on information on how to confirm and activate your account!'
+    )
   })
 })
