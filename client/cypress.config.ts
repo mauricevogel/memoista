@@ -14,9 +14,15 @@ export default defineConfig({
 
           const url = new URL(interceptUrl)
           server = http.createServer((req, res) => {
-            if (req.url === url.pathname) {
-              const data = fixture ? fs.readFileSync(`./cypress/fixtures/${fixture}`) : {}
-              res.end(data)
+            if (fixture) {
+              fs.readFile(`./cypress/fixtures/${fixture}`, 'utf8', (error, data) => {
+                if (error) {
+                  console.error(error)
+                  return
+                }
+
+                res.end(data)
+              })
             } else {
               res.end()
             }
