@@ -15,6 +15,7 @@ jobs:
         working-directory: client
     env:
       NEXT_PUBLIC_API_URL: http://localhost:8080/api
+      AUTH_SECRET: secret
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
