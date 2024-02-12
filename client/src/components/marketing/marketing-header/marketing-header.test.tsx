@@ -5,7 +5,7 @@ import { render, screen } from '@tests/utils'
 import { MarketingHeader } from './marketing-header'
 
 let mockUseMemoistaSessionStatus = 'unauthenticated'
-jest.mock('../../../hooks/use-memoista-session', () => {
+jest.mock('@/hooks/use-memoista-session', () => {
   return jest.fn(() => ({
     status: mockUseMemoistaSessionStatus
   }))

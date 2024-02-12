@@ -3,7 +3,7 @@ import { render, screen } from '@tests/utils'
 
 import { LoginForm } from './login-form'
 
-jest.mock('../../../actions/login-user', () => {
+jest.mock('@/actions/login-user', () => {
   return {
     loginUser: jest.fn()
   }
