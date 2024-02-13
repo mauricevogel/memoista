@@ -54,13 +54,7 @@ export class AuthService {
       throw new BadRequestError('Invalid email or password')
     }
 
-    const accessToken = this.jwtService.generateToken({ user: { id: user.id } })
-    const refreshToken = await this.generateRefreshToken(user.id)
-
-    return {
-      accessToken,
-      refreshToken
-    }
+    return this.generateAccessAndRefreshToken(user)
   }
 
   async registerUserWithCredentials(registerUserDto: RegisterUserDto): Promise<User> {
@@ -95,6 +89,18 @@ export class AuthService {
     return user
   }
 
+  async refreshAccessTokens(refreshToken: string): Promise<TokenResponseDto> {
+    const validRefreshToken = await this.refreshTokenService.findValidRefreshToken(refreshToken)
+
+    if (!validRefreshToken) {
+      throw new BadRequestError('Invalid refresh token')
+    }
+
+    await this.refreshTokenService.deleteRefreshToken(refreshToken)
+
+    return this.generateAccessAndRefreshToken(validRefreshToken.user)
+  }
+
   async verifyUser(verificationToken: string): Promise<User> {
     const user = await this.userService.findUserByVerificationToken(verificationToken)
 
@@ -106,6 +112,16 @@ export class AuthService {
     user.emailVerifiedAt = new Date()
 
     return this.userService.updateUser(user)
+  }
+
+  private async generateAccessAndRefreshToken(user: User): Promise<TokenResponseDto> {
+    const accessToken = this.jwtService.generateToken({ user: { id: user.id } })
+    const refreshToken = await this.generateRefreshToken(user.id)
+
+    return {
+      accessToken,
+      refreshToken
+    }
   }
 
   private async generateRefreshToken(userId: string): Promise<string> {

@@ -146,6 +146,28 @@ describe('AuthService', () => {
     })
   })
 
+  describe('refreshAccessTokens', () => {
+    it('should return new tokes on successful refresh', async () => {
+      RefreshTokenServiceMock.findValidRefreshToken.mockResolvedValue({
+        tokenDigest: 'token-digest',
+        user: mockUser
+      })
+
+      const newTokens = await authService.refreshAccessTokens('refresh-token')
+
+      expect(newTokens).toHaveProperty('accessToken')
+      expect(newTokens).toHaveProperty('refreshToken')
+    })
+
+    it('should throw an error if refresh token is invalid', async () => {
+      RefreshTokenServiceMock.findValidRefreshToken.mockResolvedValue(null)
+
+      expect(authService.refreshAccessTokens('invalid-token')).rejects.toThrow(
+        'Invalid refresh token'
+      )
+    })
+  })
+
   describe('verifyUser', () => {
     it('should verify a user', async () => {
       UserServiceMock.findUserByVerificationToken.mockResolvedValue(mockUser)

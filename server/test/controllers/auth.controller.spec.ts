@@ -57,6 +57,20 @@ describe('AuthController', () => {
     })
   })
 
+  describe('POST refresh-tokens', () => {
+    it('should refresh tokens', async () => {
+      const tokenResponseDto = {
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token'
+      }
+      AuthServiceMock.refreshAccessTokens.mockResolvedValue(tokenResponseDto)
+
+      expect(authController.refreshTokens({ refreshToken: 'token' })).resolves.toEqual(
+        tokenResponseDto
+      )
+    })
+  })
+
   describe('POST verify', () => {
     it('should verify a user account', async () => {
       AuthServiceMock.verifyUser.mockResolvedValue(mockUser)

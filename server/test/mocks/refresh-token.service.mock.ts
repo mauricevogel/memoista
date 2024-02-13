@@ -1,3 +1,5 @@
 export const RefreshTokenServiceMock = {
-  createRefreshToken: jest.fn()
+  createRefreshToken: jest.fn(),
+  findValidRefreshToken: jest.fn(),
+  deleteRefreshToken: jest.fn()
 }

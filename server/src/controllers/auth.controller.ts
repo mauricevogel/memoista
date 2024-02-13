@@ -40,4 +40,11 @@ export class AuthController {
   async verifyUser(@Body() { verificationToken }: { verificationToken: string }): Promise<User> {
     return await this.authService.verifyUser(verificationToken)
   }
+
+  @Post('/refresh-tokens')
+  async refreshTokens(
+    @Body() { refreshToken }: { refreshToken: string }
+  ): Promise<TokenResponseDto> {
+    return this.authService.refreshAccessTokens(refreshToken)
+  }
 }
