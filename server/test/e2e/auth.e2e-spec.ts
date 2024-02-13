@@ -64,8 +64,10 @@ describe('Auth (e2e)', () => {
         .expect(200)
 
       const accessToken = response.body.accessToken
+      const refreshToken = response.body.refreshToken
 
       expect(accessToken).toBeDefined()
+      expect(refreshToken).toBeDefined()
       expect(jwt.decode(accessToken)).toMatchObject({
         user: { id: user.id }
       })

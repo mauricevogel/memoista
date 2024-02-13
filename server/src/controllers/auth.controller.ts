@@ -24,8 +24,7 @@ export class AuthController {
 
   @Post('/signin')
   async signInWithCredentials(@Body() signInDto: SigninUserDto): Promise<TokenResponseDto> {
-    const accessToken = await this.authService.signInWithCredentials(signInDto)
-    return { accessToken: accessToken }
+    return this.authService.signInWithCredentials(signInDto)
   }
 
   @Post('/register')

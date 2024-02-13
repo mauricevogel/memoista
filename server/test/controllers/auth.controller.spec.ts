@@ -26,12 +26,17 @@ describe('AuthController', () => {
         password: 'testpassword'
       }
 
-      AuthServiceMock.signInWithCredentials.mockResolvedValue('testtoken')
+      const tokenResponseDto = {
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token'
+      }
+
+      AuthServiceMock.signInWithCredentials.mockResolvedValue(tokenResponseDto)
 
       const response = await authController.signInWithCredentials(signinDto)
 
       expect(AuthServiceMock.signInWithCredentials).toHaveBeenCalledWith(signinDto)
-      expect(response).toEqual({ accessToken: 'testtoken' })
+      expect(response).toEqual(tokenResponseDto)
     })
   })
 
