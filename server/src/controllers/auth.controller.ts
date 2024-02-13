@@ -1,7 +1,9 @@
 import { User } from '@prisma/client'
+import { RefreshTokensDto } from '@src/dtos/auth/refresh-tokens.dto'
 import { RegisterUserDto } from '@src/dtos/auth/register-user.dto'
 import { SigninUserDto } from '@src/dtos/auth/signin-user.dto'
 import { TokenResponseDto } from '@src/dtos/auth/token-response.dto'
+import { VerifyUserDto } from '@src/dtos/auth/verify-user.dto'
 import { UserDto } from '@src/dtos/user.dto'
 import { Serialize } from '@src/interceptors/serialize.interceptor'
 import { AuthService } from '@src/services/auth.service'
@@ -24,8 +26,7 @@ export class AuthController {
 
   @Post('/signin')
   async signInWithCredentials(@Body() signInDto: SigninUserDto): Promise<TokenResponseDto> {
-    const accessToken = await this.authService.signInWithCredentials(signInDto)
-    return { accessToken: accessToken }
+    return this.authService.signInWithCredentials(signInDto)
   }
 
   @Post('/register')
@@ -38,7 +39,12 @@ export class AuthController {
   @Post('/verify')
   @HttpCode(200)
   @Serialize(UserDto)
-  async verifyUser(@Body() { verificationToken }: { verificationToken: string }): Promise<User> {
-    return await this.authService.verifyUser(verificationToken)
+  async verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<User> {
+    return await this.authService.verifyUser(verifyUserDto.verificationToken)
+  }
+
+  @Post('/refresh-tokens')
+  async refreshTokens(@Body() refreshTokensDto: RefreshTokensDto): Promise<TokenResponseDto> {
+    return this.authService.refreshAccessTokens(refreshTokensDto.refreshToken)
   }
 }

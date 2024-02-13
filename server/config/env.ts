@@ -15,6 +15,7 @@ const env = {
   isProduction: process.env.NODE_ENV === 'production',
   isTest: process.env.NODE_ENV === 'test',
   tokenSecret: process.env.TOKEN_SECRET,
+  refreshTokenExpiryInDays: Number(process.env.REFRESH_TOKEN_EXPIRY_IN_DAYS) || 30,
   port: Number(process.env.PORT) || 8080
 }
 

@@ -26,12 +26,17 @@ describe('AuthController', () => {
         password: 'testpassword'
       }
 
-      AuthServiceMock.signInWithCredentials.mockResolvedValue('testtoken')
+      const tokenResponseDto = {
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token'
+      }
+
+      AuthServiceMock.signInWithCredentials.mockResolvedValue(tokenResponseDto)
 
       const response = await authController.signInWithCredentials(signinDto)
 
       expect(AuthServiceMock.signInWithCredentials).toHaveBeenCalledWith(signinDto)
-      expect(response).toEqual({ accessToken: 'testtoken' })
+      expect(response).toEqual(tokenResponseDto)
     })
   })
 
@@ -49,6 +54,20 @@ describe('AuthController', () => {
       await authController.registerUserWithCredentials(registerUserDto)
 
       expect(AuthServiceMock.registerUserWithCredentials).toHaveBeenCalledWith(registerUserDto)
+    })
+  })
+
+  describe('POST refresh-tokens', () => {
+    it('should refresh tokens', async () => {
+      const tokenResponseDto = {
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token'
+      }
+      AuthServiceMock.refreshAccessTokens.mockResolvedValue(tokenResponseDto)
+
+      expect(authController.refreshTokens({ refreshToken: 'token' })).resolves.toEqual(
+        tokenResponseDto
+      )
     })
   })
 

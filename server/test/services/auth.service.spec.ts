@@ -1,6 +1,8 @@
 import { RegisterUserDto } from '@src/dtos/auth/register-user.dto'
 import { AuthService } from '@src/services/auth.service'
+import { RefreshTokenService } from '@src/services/refresh-token.service'
 import { UserService } from '@src/services/user.service'
+import { RefreshTokenServiceMock } from '@test/mocks/refresh-token.service.mock'
 import { mockUser, UserServiceMock } from '@test/mocks/user.service.mock'
 import bcrypt from 'bcrypt'
 import { Action } from 'routing-controllers'
@@ -10,6 +12,7 @@ import { JwtService } from './../../src/services/jwt.service'
 
 describe('AuthService', () => {
   Container.set(UserService, UserServiceMock)
+  Container.set(RefreshTokenService, RefreshTokenServiceMock)
   const authService = Container.get(AuthService)
 
   describe('authenticateUser', () => {
@@ -58,10 +61,12 @@ describe('AuthService', () => {
       }
 
       UserServiceMock.findUserByProvider.mockResolvedValue(user)
+      RefreshTokenServiceMock.createRefreshToken.mockResolvedValue(true)
 
-      const token = await authService.signInWithCredentials(signinUserDto)
+      const tokenResponseDto = await authService.signInWithCredentials(signinUserDto)
 
-      expect(token).toBeDefined()
+      expect(tokenResponseDto).toHaveProperty('accessToken')
+      expect(tokenResponseDto).toHaveProperty('refreshToken')
     })
 
     it('should throw an error if user does not exist', async () => {
@@ -137,6 +142,28 @@ describe('AuthService', () => {
 
       expect(authService.registerUserWithCredentials(registerUserDto)).rejects.toThrow(
         'Password confirmation does not match password'
+      )
+    })
+  })
+
+  describe('refreshAccessTokens', () => {
+    it('should return new tokes on successful refresh', async () => {
+      RefreshTokenServiceMock.findValidRefreshToken.mockResolvedValue({
+        tokenDigest: 'token-digest',
+        user: mockUser
+      })
+
+      const newTokens = await authService.refreshAccessTokens('refresh-token')
+
+      expect(newTokens).toHaveProperty('accessToken')
+      expect(newTokens).toHaveProperty('refreshToken')
+    })
+
+    it('should throw an error if refresh token is invalid', async () => {
+      RefreshTokenServiceMock.findValidRefreshToken.mockResolvedValue(null)
+
+      expect(authService.refreshAccessTokens('invalid-token')).rejects.toThrow(
+        'Invalid refresh token'
       )
     })
   })
