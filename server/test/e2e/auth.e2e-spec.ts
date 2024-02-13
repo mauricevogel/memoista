@@ -3,7 +3,7 @@ import { server } from '@src/app'
 import prisma from '@src/prisma'
 import { ProviderIds } from '@src/types/enums'
 import { UserFactory } from '@test/factories/user.factory'
-import { createAccessToken } from '@test/utils/jwt'
+import { createAccessTokens } from '@test/utils/jwt'
 import jwt from 'jsonwebtoken'
 import request from 'supertest'
 
@@ -22,7 +22,7 @@ describe('Auth (e2e)', () => {
   describe('GET /api/auth/whoami', () => {
     it('should return the current user', async () => {
       const user = await userFactory.createUserWithAccount()
-      const accessToken = createAccessToken({ user: { id: user.id } })
+      const { accessToken } = await createAccessTokens(user)
 
       const response = await request(server)
         .get('/api/auth/whoami')
@@ -163,6 +163,45 @@ describe('Auth (e2e)', () => {
       await request(server)
         .post('/api/auth/verify')
         .send({ verificationToken: 'invalid-token' })
+        .expect(400)
+    })
+  })
+
+  describe('POST /api/auth/refresh-tokens', () => {
+    it('should refresh tokens', async () => {
+      const user = await userFactory.createUserWithAccount()
+      const { refreshToken } = await createAccessTokens(user)
+
+      const response = await request(server)
+        .post('/api/auth/refresh-tokens')
+        .send({ refreshToken })
+        .expect(200)
+
+      const accessToken = response.body.accessToken
+
+      await request(server)
+        .get('/api/auth/whoami')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+    })
+
+    it('should return 400 with expired refresh token', async () => {
+      const user = await userFactory.createUserWithAccount()
+      const { refreshToken } = await createAccessTokens(user)
+
+      await prisma.refreshToken.updateMany({
+        data: {
+          expiresAt: new Date('2020-01-01')
+        }
+      })
+
+      await request(server).post('/api/auth/refresh-tokens').send({ refreshToken }).expect(400)
+    })
+
+    it('should return 400 with invalid refresh token', async () => {
+      await request(server)
+        .post('/api/auth/refresh-tokens')
+        .send({ refreshToken: 'invalid-token' })
         .expect(400)
     })
   })
