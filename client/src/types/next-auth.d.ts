@@ -1,18 +1,25 @@
 import { DefaultJWT } from 'next-auth/jwt'
 
-export type ExtendedUser = DefaultSession['user'] & {
-  accessToken?: string
-  accessTokenExpires?: number
-}
-
 declare module 'next-auth' {
+  interface User {
+    id: string
+    accessToken: string
+    accessTokenExpires: number
+    refreshToken: string
+  }
+
   interface Session {
-    user: ExtendedUser
+    user: DefaultSession['user']
+    accessToken?: string
+    accessTokenExpires?: number
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT extends DefaultJWT {
-    user?: ExtendedUser
+    userId?: string
+    accessToken?: string
+    accessTokenExpires?: number
+    refreshToken?: string
   }
 }

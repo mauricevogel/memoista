@@ -13,22 +13,29 @@ export const {
   callbacks: {
     // Add additional data to the JWT
     jwt: async ({ token, user }) => {
-      if (token.user) {
-        /**
-         * Handle token expiry
-         * Date.now() returns timestamp in milliseconds, the expiry date is in seconds
-         */
-        if (Date.now() >= token.user.accessTokenExpires * 1000) {
-          return null
-        }
+      if (user) {
+        token.userId = user.id
+        token.accessToken = user.accessToken
+        token.accessTokenExpires = user.accessTokenExpires
+        token.refreshToken = user.refreshToken
       }
 
-      user && (token.user = user)
+      /**
+       * Handle token expiry
+       * Date.now() returns timestamp in milliseconds, the expiry date is in seconds
+       */
+      if (token.accessTokenExpires && Date.now() >= token.accessTokenExpires * 1000) {
+        return null
+      }
+
       return token
     },
     // Expose additional data on the session
     session: async ({ session, token }) => {
-      session.userId = token.user
+      session.user.id = token.userId
+      session.accessToken = token.accessToken
+      session.accessTokenExpires = token.accessTokenExpires
+
       return session
     }
   },

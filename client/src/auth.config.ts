@@ -17,24 +17,29 @@ export default {
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/auth/signin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(credentials)
-        })
-        const responsePayload = await response.json()
+        try {
+          const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/auth/signin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(credentials)
+          })
+          const responsePayload = await response.json()
 
-        if (response.ok && responsePayload) {
-          const accessTokenData: IAccessTokenData = jwtDecode(responsePayload.accessToken)
+          if (response.ok && responsePayload) {
+            const accessTokenData: IAccessTokenData = jwtDecode(responsePayload.accessToken)
 
-          return {
-            id: accessTokenData.user.id,
-            accessToken: responsePayload.accessToken,
-            accessTokenExpires: accessTokenData.exp
+            return {
+              id: accessTokenData.user.id,
+              accessToken: responsePayload.accessToken,
+              accessTokenExpires: accessTokenData.exp,
+              refreshToken: responsePayload.refreshToken
+            }
           }
-        }
 
-        return null
+          return null
+        } catch {
+          return null
+        }
       }
     })
   ]
